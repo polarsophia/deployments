@@ -7,9 +7,12 @@ services:
     image: ghcr.io/acdevz/catalog-service
     container_name: catalog-service
     ports:
-      - "8080:8080"
+      - 8080:8080
+      - 5005:5005
     environment:
       - BPL_JVM_THREAD_COUNT=50
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=5005
       - SPRING_DATASOURCE_URL=jdbc:postgresql://catalog-postgres:5432/catalog
     
   catalog-postgres:
