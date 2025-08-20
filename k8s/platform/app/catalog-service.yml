@@ -4,9 +4,8 @@ metadata:
   name: catalog-service
   labels:
     app: catalog-service
-
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: catalog-service
@@ -18,7 +17,6 @@ spec:
       containers:
       - name: catalog-service
         image: ghcr.io/polarsophia/catalog-service:latest
-        imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
             exec:
@@ -30,3 +28,20 @@ spec:
           value: '10'
         - name: SPRING_DATASOURCE_URL
           value: jdbc:postgresql://catalog-postgres:5432/catalog
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+  labels:
+    app: catalog-service
+spec:
+  type: ClusterIP
+  selector:
+    app: catalog-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

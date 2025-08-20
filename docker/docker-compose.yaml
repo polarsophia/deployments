@@ -16,6 +16,7 @@ services:
       - BPL_DEBUG_PORT=5005
       - SPRING_DATASOURCE_URL=jdbc:postgresql://catalog-postgres:5432/catalog
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - SPRING_PROFILES_ACTIVE=testData
     
   config-service:
     image: ghcr.io/polarsophia/config-service:latest
