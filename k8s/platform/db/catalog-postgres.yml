@@ -3,31 +3,32 @@ kind: ConfigMap
 metadata:
   name: postgres-config
   labels:
-    db: catalog-postgres
+    db: polar-postgres
 data:
   init.sql: |
-    CREATE DATABASE catalog;
+    CREATE DATABASE "catalog";
+    CREATE DATABASE "order";
 
 ---
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalog-postgres
+  name: polar-postgres
   labels:
-    db: catalog-postgres
+    db: polar-postgres
 spec:
   selector:
     matchLabels:
-      db: catalog-postgres
+      db: polar-postgres
   template:
     metadata:
       labels:
-        db: catalog-postgres
+        db: polar-postgres
     spec:
       containers:
-        - name: catalog-postgres
-          image: postgres
+        - name: polar-postgres
+          image: postgres:15
           env:
             - name: POSTGRES_USER
               value: acdevs
@@ -53,13 +54,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalog-postgres
+  name: polar-postgres
   labels:
-    db: catalog-postgres
+    db: polar-postgres
 spec:
   type: ClusterIP
   selector:
-    db: catalog-postgres
+    db: polar-postgres
   ports:
     - protocol: TCP
       port: 5432
