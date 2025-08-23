@@ -34,6 +34,7 @@ services:
   order-service:
     depends_on:
       - polar-postgres
+      - polar-rabbitmq
       - config-service
     image: ghcr.io/polarsophia/order-service:latest
     container_name: order-service
@@ -44,7 +45,19 @@ services:
       - SPRING_R2DBC_URL=r2dbc:postgresql://polar-postgres:5432/order
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
       - POLAR_CATALOG_SERVICE_URI=http://catalog-service:8080
+      - SPRING_RABBITMQ_HOST=polar-rabbitmq
 
+  dispatcher-service:
+    depends_on:
+      - polar-rabbitmq
+      - config-service
+    image: ghcr.io/polarsophia/dispatcher-service:latest
+    container_name: dispatcher-service
+    ports:
+      - 9010:9010
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - SPRING_RABBITMQ_HOST=polar-rabbitmq
 
   config-service:
     image: ghcr.io/polarsophia/config-service:latest
@@ -75,3 +88,12 @@ services:
     restart: always
     ports:
       - 6379:6379
+
+  polar-rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: polar-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
